@@ -27,6 +27,7 @@ list(APPEND apps
     signals
     colors
     linked_list
+    udp
 )
 
 foreach(name ${apps})
