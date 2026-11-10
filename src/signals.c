@@ -3,12 +3,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
 // https://stackoverflow.com/questions/1641182/how-can-i-catch-a-ctrl-c-event
 // https://www.geeksforgeeks.org/inheritance-in-c/
 // https://stackoverflow.com/questions/12662891/how-can-i-pass-a-member-function-where-a-free-function-is-expected
 // http://www.yolinux.com/TUTORIALS/C++Signals.html
-
 
 // kevin@Logan build $ kill -l
 //  1) SIGHUP	 2) SIGINT	 3) SIGQUIT	 4) SIGILL
@@ -31,8 +29,6 @@
 // SIGCONT - wake up, un-suspends a stopped process
 // SIGSTP - suspend, ^Z, suspends a process
 
-
-
 //  This class captures the SIGINT signal and sets ok to false. Since ok is
 //  static, any class that inherits this will see the status change and
 //  allow it close down cleanly.
@@ -52,10 +48,8 @@ void sig_function(int sig) {
   if (sig == SIGINT) {
     printf("\n*** SIGINT ***\n");
     ok = 0;
-  }
-  else printf("Unknown signal: %d\n", sig);
+  } else printf("Unknown signal: %d\n", sig);
 }
-
 
 int main() {
   signal_capture(SIGINT, sig_function);

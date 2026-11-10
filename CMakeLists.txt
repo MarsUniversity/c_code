@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
-PROJECT(c_code VERSION "2026.04.30" LANGUAGES C)
+PROJECT(c_code VERSION "2026.11.09" LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
-# set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 # set(CMAKE_C_EXTENSIONS ON)
 
-# if(PROJECT_IS_TOP_LEVEL)
 cmake_host_system_information(RESULT HOST QUERY HOSTNAME)
 # cmake_host_system_information(RESULT CORES QUERY NUMBER_OF_LOGICAL_CORES)
 cmake_host_system_information(RESULT OSN QUERY OS_NAME)
@@ -28,6 +27,7 @@ list(APPEND apps
     colors
     linked_list
     udp
+    daemon
 )
 
 foreach(name ${apps})

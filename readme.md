@@ -1,5 +1,12 @@
 # C Examples
 
+- `colors.c`: bash terminal colors
+- `daemon.c`: process that runs in the background
+- `linked_list.c`
+- `signals.c`: signals like interrupt from crtl-c
+- `time.c`: nicer time functions like `sleep_ms()`
+- `udp.c`: networking using UDP
+- `x-macro.c`: C preprocessor macro fun! :P
 
 # MIT License
 

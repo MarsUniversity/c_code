@@ -1,42 +1,45 @@
-#include <stdio.h>
-#include <stddef.h>
+#include <arpa/inet.h>  // inet_sockaddr
 #include <netinet/in.h> // for address structs
-#include <stdint.h>
-#include <sys/socket.h> // socket(), bind(), recvfrom(), ...
-#include <unistd.h>     // for close(), usleep()
-#include <string.h> // strlen, memset
-#include <arpa/inet.h> // inet_sockaddr
 #include <netinet/in.h>
-#include <sys/time.h> // gettimeofday(), struct timeval
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>     // strlen, memset
+#include <sys/socket.h> // socket(), bind(), recvfrom(), ...
+#include <sys/time.h>   // gettimeofday(), struct timeval
+#include <unistd.h>     // for close(), usleep()
 
 typedef struct sockaddr_in inetaddr_t; // udp or tcp
 typedef struct timeval timeval_t;
 
-#define ERROR_LIST \
-X(SOCKERROR_SUCCESS, 0, " ") \
-X(SOCKERROR_CREATE, -1, " ") \
-X(SOCKERROR_REUSE, -2, " ") \
-X(SOCKERROR_SET_TIMEOUT, -3, " ") \
-X(SOCKERROR_NOT_OPENED, -4, " ") \
-X(SOCKERROR_BIND, -5, " ") \
-X(SOCKERROR_IN_USE, -6, " ") \
-X(SOCKERROR_RECV, -7, " ") \
-X(SOCKERROR_SEND, -8, " ") \
-X(SOCKERROR_NULL, -9, " ")
+#define ERROR_LIST                                                                                                                                                                                     \
+  X(SOCKERROR_SUCCESS, 0, " ")                                                                                                                                                                         \
+  X(SOCKERROR_CREATE, -1, " ")                                                                                                                                                                         \
+  X(SOCKERROR_REUSE, -2, " ")                                                                                                                                                                          \
+  X(SOCKERROR_SET_TIMEOUT, -3, " ")                                                                                                                                                                    \
+  X(SOCKERROR_NOT_OPENED, -4, " ")                                                                                                                                                                     \
+  X(SOCKERROR_BIND, -5, " ")                                                                                                                                                                           \
+  X(SOCKERROR_IN_USE, -6, " ")                                                                                                                                                                         \
+  X(SOCKERROR_RECV, -7, " ")                                                                                                                                                                           \
+  X(SOCKERROR_SEND, -8, " ")                                                                                                                                                                           \
+  X(SOCKERROR_NULL, -9, " ")
 
 typedef enum {
-  #define X(id, val, label) id = val,  // X just extracts the ID 
+#define X(id, val, label) id = val, // X just extracts the ID
   ERROR_LIST
-  #undef X
-  ERR_MAX_COUNT
+#undef X
+      ERR_MAX_COUNT
 } ErrorCode;
 
-const char* get_error_string(ErrorCode code) {
+const char *get_error_string(ErrorCode code) {
   switch (code) {
-    #define X(id, val, label) case id: return label; // X extracts the label
+#define X(id, val, label)                                                                                                                                                                              \
+  case id:                                                                                                                                                                                             \
+    return label; // X extracts the label
     ERROR_LIST
-    #undef X
-    default: return "Unknown Error";
+#undef X
+  default:
+    return "Unknown Error";
   }
 }
 
@@ -108,7 +111,7 @@ int32_t udp_bind(udp_t *udp, const inetaddr_t *addr) {
   if (udp == nullptr || udp == NULL) return SOCKERROR_NULL;
   if (addr == nullptr || addr == NULL) return SOCKERROR_NULL;
   if (udp->fd == 0) return SOCKERROR_NOT_OPENED;
-  
+
   int err = bind(udp->fd, (const struct sockaddr *)addr, sizeof(*addr)); // FIXME: sizeof(addr) is pointer not struct
   if (err < 0) return SOCKERROR_BIND;
 
@@ -123,29 +126,17 @@ int32_t udp_recvfrom(udp_t *udp, size_t size, inetaddr_t *from_addr) {
   socklen_t from_len = sizeof(*from_addr);
   memset(from_addr, 0, from_len);
 
-  int32_t num = recvfrom(
-    udp->fd,
-    udp->buffer,
-    size,
-    udp->flags,
-    (struct sockaddr *)from_addr,
-    &from_len);
+  int32_t num = recvfrom(udp->fd, udp->buffer, size, udp->flags, (struct sockaddr *)from_addr, &from_len);
   return num;
 }
 
 int32_t udp_sendto(udp_t *udp, size_t size, const inetaddr_t *addr) {
   if (udp == nullptr || udp == NULL) return SOCKERROR_NULL;
   if (size > UDP_BUFFER_SIZE) size = UDP_BUFFER_SIZE;
-  int32_t num = sendto(
-    udp->fd,
-    udp->buffer,
-    size,
-    udp->flags,
-    (struct sockaddr *)addr,
-    sizeof(*addr)); // FIXME: sizeof(addr) is pointer not struct
+  int32_t num = sendto(udp->fd, udp->buffer, size, udp->flags, (struct sockaddr *)addr,
+                       sizeof(*addr)); // FIXME: sizeof(addr) is pointer not struct
   return num;
 }
-
 
 int main() {
   udp_t sock = {};
@@ -153,7 +144,6 @@ int main() {
   printf("This needs to be FIXED ... it is broken\n");
   return 0;
 }
-
 
 // int32_t udp_recvfrom(udp_t *udp, uint8_t* buffer, size_t msg_size, inetaddr_t *from_addr) {
 //   // if (msg_size > buffer.size) msg_size = buffer.size;
@@ -173,5 +163,5 @@ int main() {
 //   int32_t num = sendto(udp->fd, buffer, size, udp->flags,
 //                       (struct sockaddr *)addr, sizeof(*addr)); // FIXME: sizeof(addr) is pointer not struct
 //   return num;
-  
+
 // }
